@@ -1,5 +1,4 @@
-# Covid-Information
-Covid-19 Informations.
+#Covid-19 Scraper
 
 I'll try to add new features every time I have the opportunity to.
 
