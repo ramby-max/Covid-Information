@@ -6,6 +6,10 @@ Requirements:
 - requests - Windows - pip install requests / Linux - pip3 install requests
 - BeautifulSoup4 - Windows - pip install beautifulsoup4 / Linux - pip3 install beautifulsoup4
 
+06/27/2020 -
+- added a really buggy GUI using tkinter
+- to be fixed
+
 06/23/2020 -
 - added search for every country
 - fixed some issues
