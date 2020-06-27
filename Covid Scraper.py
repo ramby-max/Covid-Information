@@ -1,14 +1,16 @@
 import requests
 import sys
 from bs4 import BeautifulSoup
+from tkinter import *
 
-while True:
-    choice = input("1. Worldwide Search\n2. Country Search\nChoice: ")
+root = Tk()
 
-    valuesList = []
+root.title("Covid Scraper")
+root.configure(width=200, height=300, background="#581845")
+wasShown = False
 
-    if choice == "1":
-        print("Please wait...\n")
+def on_click():
+    if choice.get() == "1":
         total = requests.get("https://www.ovulation-calculators.com/coronavirus/")
         totalSrc = total.content
         soup = BeautifulSoup(totalSrc, "html.parser")
@@ -34,44 +36,75 @@ while True:
                 recoveries = valuesList[3]
                 recoveries = recoveries.replace("recoveries", "")
 
-        print(f"[!] Total Covid-19 Cases: {cases}")
-        print(f"[!] Total Covid-19 Deaths: {deaths}")
+        casesLabel = Label(text=f"[!] Total Covid-19 Cases: {cases}", background="#581845")
+        deathsLabel = Label(text=f"[!] Total Covid-19 Deaths: {deaths}", background="#581845")
         #print(f"[!] Total Covid-19 Active Cases: {aCases}")
-        print(f"[!] Total Covid-19 Recoveries: {recoveries}\n")
+        recoveriesLabel = Label(text=f"[!] Total Covid-19 Recoveries: {recoveries}", background="#581845")
 
-    elif choice == "2":
-        countryChoice = input("Input country: ")
-        print("Please wait...\n")
-        country = requests.get(f"https://www.ovulation-calculators.com/coronavirus/{countryChoice.lower()}")
+        casesLabel.pack()
+        deathsLabel.pack()
+        recoveriesLabel.pack()
 
-        countrySrc = country.content
-        soup = BeautifulSoup(countrySrc, "html.parser")
+    elif choice.get() == "2":
+        countryChoice = Entry(root, text="Input the country you want to search: ")
+        countryChoice.pack()
 
-        div = soup.find("div", {"class": "col-sm-6"})
-        
-        for value in div.find_all("tr"):
-            valuesList.append(value.text)
-        
-        valuesList.pop(0)
-        valuesList.pop(0)
-        valuesList.pop(1)
-        valuesList.pop(2)
-        valuesList.pop(3)
-        valuesList.pop(3)
-        valuesList.pop(3)
-        valuesList.pop(3)
-
-        if valuesList[0] == " Confirmed coronavirus cases ":
-            print("No country found.")
+        if len(countryChoice.get()) == 0:
+            pass
 
         else:
-            confirmedCa = str(valuesList[0])
-            confirmedCa = confirmedCa.replace(" Confirmed coronavirus cases ", "")
-            confirmedDe = str(valuesList[1])
-            confirmedDe = confirmedDe.replace(" Confirmed deaths ", "")
-            recovered = str(valuesList[2])
-            recovered = recovered.replace(" Recovered patients ", "")
+            countryString = countryChoice.get()
 
-            print(f"[!] Total Covid-19 Cases in {countryChoice.upper()}: {confirmedCa}")
-            print(f"[!] Total Covid-19 Deaths in {countryChoice.upper()}: {confirmedDe}")
-            print(f"[!] Total Covid-19 Recoveries in {countryChoice.upper()}: {recovered}\n")
+            country = requests.get(f"https://www.ovulation-calculators.com/coronavirus/{countryChoice.get()}")
+
+            countrySrc = country.content
+            soup = BeautifulSoup(countrySrc, "html.parser")
+
+            div = soup.find("div", {"class": "col-sm-6"})
+            
+            for value in div.find_all("tr"):
+                valuesList.append(value.text)
+            
+            valuesList.pop(0)
+            valuesList.pop(0)
+            valuesList.pop(1)
+            valuesList.pop(2)
+            valuesList.pop(3)
+            valuesList.pop(3)
+            valuesList.pop(3)
+            valuesList.pop(3)
+
+            if valuesList[0] == " Confirmed coronavirus cases ":
+                print("No country found.")
+
+            else:
+                confirmedCa = str(valuesList[0])
+                confirmedCa = confirmedCa.replace(" Confirmed coronavirus cases ", "")
+                confirmedDe = str(valuesList[1])
+                confirmedDe = confirmedDe.replace(" Confirmed deaths ", "")
+                recovered = str(valuesList[2])
+                recovered = recovered.replace(" Recovered patients ", "")
+
+                confirmedCaLabel = Label(root, text=f"[!] Total Covid-19 Cases in {countryString.upper()}: {confirmedCa}", background="#581845")
+                confirmedDeLabel = Label(root, text=f"[!] Total Covid-19 Deaths in {countryString.upper()}: {confirmedDe}", background="#581845")
+                recoveredLabel = Label(root, text=f"[!] Total Covid-19 Recoveries in {countryString.upper()}: {recovered}", background="#581845")
+
+                confirmedCaLabel.pack()
+                confirmedDeLabel.pack()
+                recoveredLabel.pack()
+
+choice = StringVar()
+worldWideRadio = Radiobutton(root, text="Worldwide Search", value="1", variable = choice, background="#581845")
+countryRadio = Radiobutton(root, text="Search by Country", value="2", variable = choice, background="#581845")
+worldWideRadio.pack()
+countryRadio.pack()
+
+goButton = Button(root, text="Search", command=on_click, background="#581845")
+goButton.pack()
+
+valuesList = []
+
+root.minsize(width=600, height=400)
+root.maxsize(width=600, height=400)
+
+root.mainloop()
